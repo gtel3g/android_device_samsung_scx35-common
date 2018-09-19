@@ -48,6 +48,7 @@ enum device_variant {
 	I9060C,
 	I9060M,
 	G361H,
+	T561,
 	G531BT,
 	G531H,
 	DEVICE_UNSUPPORTED,
@@ -67,6 +68,8 @@ device_variant match(std::string bl)
 			return I9060M;
 	} else if (bl.find("G361H") != std::string::npos) {
 			return G361H;
+	} else if (bl.find("T561") != std::string::npos) {
+                return T561;		
 	} else if (bl.find("G531BT") != std::string::npos) {
 			return G531BT;
 	} else if (bl.find("G531H") != std::string::npos) {
@@ -122,6 +125,11 @@ void vendor_load_properties()
 			/* grandneove3gub */
 			property_override("ro.product.model", "GT-I9060M");
 			property_override("ro.product.device", "grandneove3g");
+			break;
+		case T561:
+		    /* gtel3gxx */
+		    property_set("ro.product.model", "SM-T561");
+		    property_set("ro.product.device", "gtel3g");
 			break;
 		case G361H:
 			/* coreprimeve3gxx */
