@@ -128,8 +128,8 @@ void vendor_load_properties()
 			break;
 		case T561:
 		    /* gtel3gxx */
-		    property_set("ro.product.model", "SM-T561");
-		    property_set("ro.product.device", "gtel3g");
+			property_override("ro.product.model", "SM-T561");
+			property_override("ro.product.device", "gtel3g");
 			break;
 		case G361H:
 			/* coreprimeve3gxx */
