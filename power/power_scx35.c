@@ -37,6 +37,14 @@
 #include <hardware/hardware.h>
 #include <hardware/power.h>
 
+/*
+ * POWER_HINT_SET_PROFILE was removed from hardware/power.h in Pie,
+ * but LineagePowerHint::SET_PROFILE still uses the legacy value.
+ */
+#ifndef POWER_HINT_SET_PROFILE
+#define POWER_HINT_SET_PROFILE 0x00000111
+#endif
+
 #define PARAM_MAXLEN      10
 
 #define CPU_SYSFS_PATH          "/sys/devices/system/cpu"
@@ -444,7 +452,7 @@ out:
  */
 void power_hint(power_hint_t hint, void *data)
 {
-	switch (hint) {
+	switch ((uint32_t)hint) {
 		case POWER_HINT_INTERACTION: {
 			if (current_power_profile == PROFILE_POWER_SAVE) {
 				return;
