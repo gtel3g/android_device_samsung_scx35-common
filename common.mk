@@ -111,7 +111,8 @@ PRODUCT_PACKAGES += \
     hwcomposer.sc8830 \
     sprd_gsp.sc8830 \
 	libmemoryheapion \
-	libion_sprd
+	libion_sprd \
+	memtrack.sc8830
 
 # System init.rc files
 PRODUCT_PACKAGES += \
