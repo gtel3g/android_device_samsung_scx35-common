@@ -364,6 +364,14 @@ void power_init() {
  */
 void power_set_interactive(int on) {
 
+	/*
+	 * The legacy SCX35 kernel uses early suspend. Waking the CPU does not
+	 * leave early-suspend state; userspace must explicitly request "on".
+	 */
+	if (on) {
+		sysfs_write("/sys/power/state", "on");
+	}
+
 	struct touch_path *touch = (struct touch_path *)malloc(sizeof(struct touch_path));
 	struct stat sb;
 	char touchkey_node[2];
