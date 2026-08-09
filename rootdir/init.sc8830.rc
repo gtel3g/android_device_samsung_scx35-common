@@ -64,6 +64,11 @@ service charger /charger
     seclabel u:r:healthd:s0
 
 on post-fs
+    # Legacy SPRD composer asks for binderized allocator synchronously.
+    # Start allocator first and hold init briefly before composer/class-hal.
+    start vendor.gralloc-2-0
+    exec -- /system/bin/sleep 2
+    start vendor.hwcomposer-2-1
     chown system system /productinfo
     chmod 0771 /productinfo
 
