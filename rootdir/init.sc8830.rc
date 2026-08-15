@@ -16,6 +16,11 @@ on early-init
     chmod 777 /sys/class/input/event0/device/device/enable
     mount debugfs /sys/kernel/debug /sys/kernel/debug
 
+    # WebView sandbox requires access to atrace trace_marker
+    chmod 0755 /sys/kernel/debug
+    chmod 0755 /sys/kernel/debug/tracing
+    chmod 0222 /sys/kernel/debug/tracing/trace_marker
+
 on init
     mkdir /productinfo 0771 system system
     symlink /dev/block/platform/sdio_emmc/by-name/PERSISTENT /dev/block/persistent
