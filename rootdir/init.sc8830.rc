@@ -1,6 +1,7 @@
 import /init.board.rc
 import /init.sc8830.usb.rc
 import /init.wifi.rc
+import /swap.rc
 
 on early-init
     mount debugfs debugfs /sys/kernel/debug
@@ -416,7 +417,7 @@ on boot
 
 # Permissions for System Server and daemons.
     chown system system /sys/devices/platform/panel/backlight/panel/brightness
-    write /proc/sys/vm/dirty_writeback_centisecs 1000
+    write /proc/sys/vm/dirty_writeback_centisecs 500
 
 on charger
     start console
