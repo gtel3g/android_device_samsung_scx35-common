@@ -42,24 +42,28 @@ std::string bootloader;
 std::string device;
 
 enum device_variant {
-	G360H,
 	G360HU,
+	G360H,
 	I9060I,
 	I9060C,
 	I9060M,
 	G361H,
-	T561,
 	G531BT,
 	G531H,
+	T113NU,
+	T113,
+	T116,
+	T560,
+	T561,
 	DEVICE_UNSUPPORTED,
 };
 
 device_variant match(std::string bl)
 {
-	if (bl.find("G360H") != std::string::npos) {
-			return G360H;
-	} else if (bl.find("G360HU") != std::string::npos) {
+	if (bl.find("G360HU") != std::string::npos) {
 			return G360HU;
+	} else if (bl.find("G360H") != std::string::npos) {
+			return G360H;
 	} else if (bl.find("I9060I") != std::string::npos) {
 			return I9060I;
 	} else if (bl.find("I9060C") != std::string::npos) {
@@ -68,12 +72,20 @@ device_variant match(std::string bl)
 			return I9060M;
 	} else if (bl.find("G361H") != std::string::npos) {
 			return G361H;
-	} else if (bl.find("T561") != std::string::npos) {
-                return T561;		
 	} else if (bl.find("G531BT") != std::string::npos) {
 			return G531BT;
 	} else if (bl.find("G531H") != std::string::npos) {
 			return G531H;
+	} else if (bl.find("T113NU") != std::string::npos) {
+			return T113NU;
+	} else if (bl.find("T113") != std::string::npos) {
+			return T113;
+	} else if (bl.find("T116") != std::string::npos) {
+			return T116;
+	} else if (bl.find("T560") != std::string::npos) {
+			return T560;
+	} else if (bl.find("T561") != std::string::npos) {
+			return T561;
 	} else {
 			return DEVICE_UNSUPPORTED;
 	}
@@ -93,6 +105,79 @@ void property_override(char const prop[], char const value[])
 		__system_property_update(pi, value, strlen(value));
 	else
 		__system_property_add(prop, strlen(prop), value, strlen(value));
+}
+
+static int read_simslot_count()
+{
+	int count = -1;
+	FILE* file = fopen("/proc/simslot_count", "r");
+
+	if (file == nullptr)
+		return -1;
+
+	if (fscanf(file, "%d", &count) != 1)
+		count = -1;
+
+	fclose(file);
+	return count;
+}
+
+static void set_wifi_only_properties()
+{
+	property_override("ro.radio.noril", "1");
+	property_override("ro.carrier", "wifi-only");
+	property_override("ro.multisim.simslotcount", "0");
+	property_override("persist.dsds.enabled", "false");
+	property_override("persist.radio.multisim.config", "none");
+}
+
+static void set_single_sim_properties()
+{
+	property_override("ro.radio.noril", "0");
+	property_override("ro.multisim.simslotcount", "1");
+	property_override("persist.dsds.enabled", "false");
+	property_override("persist.radio.multisim.config", "none");
+}
+
+static void set_dual_sim_properties()
+{
+	property_override("ro.radio.noril", "0");
+	property_override("ro.multisim.simslotcount", "2");
+	property_override("persist.dsds.enabled", "true");
+	property_override("persist.radio.multisim.config", "dsds");
+}
+
+static void set_radio_properties(device_variant variant)
+{
+	switch (variant) {
+	case T113NU:
+	case T113:
+	case T560:
+		set_wifi_only_properties();
+		break;
+
+	case T116:
+	case T561:
+		set_single_sim_properties();
+		break;
+
+	case G360HU:
+	case G360H:
+	case I9060I:
+	case I9060C:
+	case I9060M:
+	case G361H:
+	case G531BT:
+	case G531H:
+		if (read_simslot_count() == 1)
+			set_single_sim_properties();
+		else
+			set_dual_sim_properties();
+		break;
+
+	default:
+		break;
+	}
 }
 
 void vendor_load_properties()
@@ -126,11 +211,6 @@ void vendor_load_properties()
 			property_override("ro.product.model", "GT-I9060M");
 			property_override("ro.product.device", "grandneove3g");
 			break;
-		case T561:
-		    /* gtel3gxx */
-			property_override("ro.product.model", "SM-T561");
-			property_override("ro.product.device", "gtel3g");
-			break;
 		case G361H:
 			/* coreprimeve3gxx */
 			property_override("ro.product.model", "SM-G361H");
@@ -146,36 +226,34 @@ void vendor_load_properties()
 			property_override("ro.product.model", "SM-G531H");
 			property_override("ro.product.device", "grandprimeve3g");
 			break;
+		case T113NU:
+			/* goyavewifi */
+			property_override("ro.product.model", "SM-T113NU");
+			property_override("ro.product.device", "goyavewifi");
+			break;
+		case T113:
+			/* goyavewifi */
+			property_override("ro.product.model", "SM-T113");
+			property_override("ro.product.device", "goyavewifi");
+			break;
+		case T116:
+			/* goyave3g */
+			property_override("ro.product.model", "SM-T116");
+			property_override("ro.product.device", "goyave3g");
+			break;
+		case T560:
+			/* gtelwifi */
+			property_override("ro.product.model", "SM-T560");
+			property_override("ro.product.device", "gtelwifi");
+			break;
+		case T561:
+			/* gtel3g */
+			property_override("ro.product.model", "SM-T561");
+			property_override("ro.product.device", "gtel3g");
+			break;
 		default:
 			break;
 	}
 
-	/*
-	 * Now is the fun part: Single SIM variant
-	 */
-
-	FILE* file;
-	char* simslot_count_path = "/proc/simslot_count";
-	char simslot_count[PROP_NAME_MAX] = "\0"; // Terminate NULL character
-
-	file = fopen(simslot_count_path, "r");
-	if (file != NULL) {
-		simslot_count[0] = fgetc(file);
-		property_override("ro.multisim.simslotcount", simslot_count);
-
-		if(!strcmp(simslot_count, "0") || !strcmp(simslot_count, "1")) {
-			// If only one SIM slot is detected, treat as single-SIM device
-			property_override("persist.dsds.enabled", "false");
-			property_override("persist.radio.multisim.config", "none");
-		} else {
-			// Dual-SIM device
-			property_override("persist.dsds.enabled", "true");
-			property_override("persist.radio.multisim.config", "dsds");
-		}
-		// Close the file after using it
-		fclose(file);
-	} else {
-		// If can't open /proc/simslot_count, do nothing
-		return;
-	}
+	set_radio_properties(variant);
 }
