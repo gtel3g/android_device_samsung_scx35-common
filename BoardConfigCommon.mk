@@ -30,6 +30,13 @@ USE_BLUETOOTH_BCM4343 := true
 BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := device/samsung/scx35-common/bluetooth
 BOARD_CUSTOM_BT_CONFIG := device/samsung/scx35-common/bluetooth/libbt_vndcfg.txt
 
+ifeq ($(TARGET_DEVICE),gtel3g)
+# Legacy proprietary blob compatibility
+TARGET_PROCESS_SDK_VERSION_OVERRIDE += \
+    /system/vendor/bin/hw/android.hardware.camera.provider@2.4-service=22 \
+    /system/vendor/bin/hw/android.hardware.media.omx@1.0-service=22
+endif
+
 # RIL
 TARGET_DISABLE_ASHMEM_TRACKING := true
 
