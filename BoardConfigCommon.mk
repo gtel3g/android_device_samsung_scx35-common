@@ -93,7 +93,7 @@ TARGET_SPECIFIC_HEADER_PATH := device/samsung/scx35-common/include
 BOARD_HAL_STATIC_LIBRARIES := libhealthd.sc8830
 
 # Charger
-BOARD_CHARGER_ENABLE_SUSPEND := true
+BOARD_CHARGER_ENABLE_SUSPEND := false
 BOARD_NO_CHARGER_LED := true
 BOARD_CHARGING_MODE_BOOTING_LPM := /sys/class/power_supply/battery/batt_lp_charging
 CHARGING_ENABLED_PATH := /sys/class/power_supply/battery/batt_lp_charging
