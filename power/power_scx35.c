@@ -180,7 +180,7 @@ static unsigned int read_panel_brightness() {
 	// brightness can range from 0 to 255, so max. 3 chars + '\0'
 	char panel_brightness[4];
 
-	read_status = sysfs_read(PANEL_BRIGHTNESS, panel_brightness, sizeof(PANEL_BRIGHTNESS));
+	read_status = sysfs_read(PANEL_BRIGHTNESS, panel_brightness, sizeof(panel_brightness));
 	if (read_status < 0) {
 		ALOGE("%s: Failed to read panel brightness from %s!\n", __func__, PANEL_BRIGHTNESS);
 		return -1;
@@ -273,6 +273,13 @@ static void find_input_nodes(void) {
 		snprintf(node_path, sizeof(node_path),
 			 "/sys/class/input/input%d/enabled", i);
 
+		/*
+		 * Some input drivers rely entirely on early suspend and do not
+		 * expose an enabled sysfs attribute.
+		 */
+		if (access(node_path, W_OK) != 0)
+			continue;
+
 		if (strncmp(file_content, "sec_touchkey", 12) == 0) {
 			ALOGV("%s: found touchkey path: %s\n", __func__, node_path);
 			snprintf(touch.touchkey_power_path,
@@ -298,6 +305,9 @@ static void find_input_nodes(void) {
 void power_init() {
 	get_cpu_interactive_paths();
 	find_input_nodes();
+
+	/* Start foreground operation with at least two CPUs online. */
+	sysfs_write(CPU_NUM_MIN_LIMIT_PATH, "2");
 }
 
 /*
@@ -339,6 +349,12 @@ void power_set_interactive(int on) {
 
 	ALOGV("power_set_interactive: %d\n", on);
 
+	/*
+	 * CPU floor follows the interactive state independently of the
+	 * touchscreen and panel brightness handling below.
+	 */
+	sysfs_write(CPU_NUM_MIN_LIMIT_PATH, on ? "2" : "1");
+
 	// Do not disable any input devices if the screen is on but we are in a non-interactive state
 	if (!on) {
 		if (read_panel_brightness() > 0) {
@@ -347,9 +363,6 @@ void power_set_interactive(int on) {
 			goto out;
 		}
 	}
-
-	/* Keep two cores available for foreground UI work. */
-	sysfs_write(CPU_NUM_MIN_LIMIT_PATH, on ? "2" : "1");
 
 	if (touch.touchscreen_power_path[0] == '\0')
 		find_input_nodes();

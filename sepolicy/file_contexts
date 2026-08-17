@@ -101,3 +101,6 @@
 
 # Sysfs
 /sys/devices/platform/sprd_fb.0/graphics/fb0/dynamic_pclk    u:object_r:sysfs_dynamic_pclk:s0
+
+# Power HAL
+/system/vendor/bin/hw/android\.hardware\.power@1\.0-service\.sc8830    u:object_r:hal_power_default_exec:s0
