@@ -224,7 +224,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 # sdcardfs
 PRODUCT_PROPERTY_OVERRIDES += \
-	ro.sys.sdcardfs=false
+	ro.sys.sdcardfs=true
 
 # Dalvik heap config
 $(call inherit-product, frameworks/native/build/tablet-7in-hdpi-1024-dalvik-heap.mk)
