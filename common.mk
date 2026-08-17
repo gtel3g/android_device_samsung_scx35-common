@@ -240,8 +240,12 @@ PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
 PRODUCT_PROPERTY_OVERRIDES += \
 	persist.sys.usb.config=mtp,adb
 
-# Android Go
+# Memory configuration
 PRODUCT_PROPERTY_OVERRIDES += \
-	ro.config.low_ram=false
+	ro.config.low_ram=false \
+	ro.statsd.enable=false
 
-$(call inherit-product, build/target/product/go_defaults_512.mk)
+# Keep ART footprint small without inheriting Android Go memory policy.
+PRODUCT_ALWAYS_PREOPT_EXTRACTED_APK := true
+PRODUCT_ART_TARGET_INCLUDE_DEBUG_BUILD := false
+PRODUCT_MINIMIZE_JAVA_DEBUG_INFO := true
