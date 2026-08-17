@@ -65,4 +65,4 @@ on boot
     chmod 660 /dev/ttyV0
     chmod 777 /system/etc/HiMap.db
 
-    write /sys/devices/system/cpu/cpufreq/interactive/timer_rate 100000
+    write /sys/devices/system/cpu/cpufreq/interactive/timer_rate 20000

@@ -19,10 +19,8 @@
  */
 
 #include <ctype.h>
-#include <dirent.h>
 #include <errno.h>
 #include <fcntl.h>
-#include <malloc.h>
 #include <stdbool.h>
 #include <string.h>
 #include <unistd.h>
@@ -53,6 +51,7 @@
 #define SCALING_GOVERNOR_PATH   CPU_SYSFS_PATH "/cpu0/cpufreq/scaling_governor"
 #define SCALING_MAX_FREQ_PATH   CPU_SYSFS_PATH "/cpu0/cpufreq/scaling_max_freq"
 #define SCALING_MIN_FREQ_PATH   CPU_SYSFS_PATH "/cpu0/cpufreq/scaling_min_freq"
+#define CPU_NUM_MIN_LIMIT_PATH  CPU_SYSFS_PATH "/cpuhotplug/cpu_num_min_limit"
 #define PANEL_BRIGHTNESS        "/sys/class/backlight/panel/brightness"
 
 /* Interactive governor */
@@ -61,12 +60,13 @@
 #define BOOSTPULSE_PATH         "/boostpulse"
 
 struct touch_path {
-	char* touchscreen_power_path;
-	char* touchkey_power_path;
+	char touchscreen_power_path[PATH_MAX];
+	char touchkey_power_path[PATH_MAX];
 	bool touchkey_blocked;
 };
 
 static char CPU_INTERACTIVE_PATH[80];
+static struct touch_path touch;
 
 enum power_profile_e {
 	PROFILE_POWER_SAVE = 0,
@@ -256,75 +256,35 @@ static void set_power_profile(enum power_profile_e profile)
 	current_power_profile = profile;
 }
 
-static void find_input_nodes(struct touch_path *touch) {
-
-	const char filename[] = "name";
-	char errno_str[64];
-	struct dirent *de;
+static void find_input_nodes(void) {
 	char file_content[20];
-	char *path = NULL;
-	char *node_path = NULL;
-	char dir[1024];
-	size_t pathsize;
-	size_t node_pathsize;
-	DIR *d;
+	char name_path[PATH_MAX];
+	char node_path[PATH_MAX];
 	uint32_t i;
 
 	for (i = 0; i < 20; i++) {
-		snprintf(dir, sizeof(dir), "/sys/class/input/input%d", i);
-		d = opendir(dir);
-		if (d == NULL) {
-			return;
+		snprintf(name_path, sizeof(name_path),
+			 "/sys/class/input/input%d/name", i);
+		if (access(name_path, R_OK) != 0 ||
+		    sysfs_read(name_path, file_content, sizeof(file_content)) != 0) {
+			continue;
 		}
 
-		while ((de = readdir(d)) != NULL) {
-			if (strncmp(filename, de->d_name, sizeof(filename)) == 0) {
-				pathsize = strlen(dir) + strlen(de->d_name) + 2;
-				node_pathsize = strlen(dir) + strlen("enabled") + 2;
+		snprintf(node_path, sizeof(node_path),
+			 "/sys/class/input/input%d/enabled", i);
 
-				path = malloc(pathsize);
-				node_path = malloc(node_pathsize);
-				if (path == NULL || node_path == NULL) {
-					strerror_r(errno, errno_str, sizeof(errno_str));
-					ALOGE("Out of memory: %s\n", errno_str);
-					return;
-				}
+		if (strncmp(file_content, "sec_touchkey", 12) == 0) {
+			ALOGV("%s: found touchkey path: %s\n", __func__, node_path);
+			snprintf(touch.touchkey_power_path,
+				 sizeof(touch.touchkey_power_path), "%s", node_path);
+		}
 
-				snprintf(path, pathsize, "%s/%s", dir, filename);
-				sysfs_read(path, file_content, sizeof(file_content));
-				snprintf(node_path, node_pathsize, "%s/%s", dir, "enabled");
-
-				if (strncmp(file_content, "sec_touchkey", 12) == 0) {
-					ALOGV("%s: found touchkey path: %s\n", __func__, node_path);
-					touch->touchkey_power_path = malloc(node_pathsize);
-					if (touch->touchkey_power_path == NULL) {
-						strerror_r(errno, errno_str, sizeof(errno_str));
-						ALOGE("Out of memory: %s\n", errno_str);
-						return;
-					}
-					snprintf(touch->touchkey_power_path, node_pathsize,
-									"%s", node_path);
-				}
-
-				if (strncmp(file_content, "sec_touchscreen", 15) == 0) {
-					ALOGV("%s: found touchscreen path: %s\n", __func__, node_path);
-					touch->touchscreen_power_path = malloc(node_pathsize);
-					if (touch->touchscreen_power_path == NULL) {
-						strerror_r(errno, errno_str, sizeof(errno_str));
-						ALOGE("Out of memory: %s\n", errno_str);
-						return;
-					}
-					snprintf(touch->touchscreen_power_path, node_pathsize,
-									"%s", node_path);
-				}
-			}
+		if (strncmp(file_content, "sec_touchscreen", 15) == 0) {
+			ALOGV("%s: found touchscreen path: %s\n", __func__, node_path);
+			snprintf(touch.touchscreen_power_path,
+				 sizeof(touch.touchscreen_power_path), "%s", node_path);
 		}
 	}
-	if (path)
-		free(path);
-	if (node_path)
-		free(node_path);
-	closedir(d);
 }
 
 /**********************************************************
@@ -337,6 +297,7 @@ static void find_input_nodes(struct touch_path *touch) {
  */
 void power_init() {
 	get_cpu_interactive_paths();
+	find_input_nodes();
 }
 
 /*
@@ -372,7 +333,6 @@ void power_set_interactive(int on) {
 		sysfs_write("/sys/power/state", "on");
 	}
 
-	struct touch_path *touch = (struct touch_path *)malloc(sizeof(struct touch_path));
 	struct stat sb;
 	char touchkey_node[2];
 	int rc;
@@ -384,20 +344,29 @@ void power_set_interactive(int on) {
 		if (read_panel_brightness() > 0) {
 			ALOGV("%s: Moving to non-interactive state, but screen is still on,"
 			      " not disabling input devices\n", __func__);
-		goto out;
+			goto out;
 		}
 	}
-	find_input_nodes(touch);
 
-	sysfs_write(touch->touchscreen_power_path, on ? "1" : "0");
+	/* Keep two cores available for foreground UI work. */
+	sysfs_write(CPU_NUM_MIN_LIMIT_PATH, on ? "2" : "1");
 
-	rc = stat(touch->touchkey_power_path, &sb);
+	if (touch.touchscreen_power_path[0] == '\0')
+		find_input_nodes();
+
+	if (touch.touchscreen_power_path[0] != '\0')
+		sysfs_write(touch.touchscreen_power_path, on ? "1" : "0");
+
+	if (touch.touchkey_power_path[0] == '\0')
+		goto out;
+
+	rc = stat(touch.touchkey_power_path, &sb);
 	if (rc < 0) {
 		goto out;
 	}
 
 	if (!on) {
-		if (sysfs_read(touch->touchkey_power_path, touchkey_node,
+		if (sysfs_read(touch.touchkey_power_path, touchkey_node,
 			       sizeof(touchkey_node)) == 0) {
 			/*
 			* If touchkey_node is 0, the keys have been disabled by another component
@@ -405,15 +374,15 @@ void power_set_interactive(int on) {
 			* from suspend.
 			*/
 			if ((touchkey_node[0] - '0') == 0) {
-				touch->touchkey_blocked = true;
+				touch.touchkey_blocked = true;
 			} else {
-				touch->touchkey_blocked = false;
-				sysfs_write(touch->touchkey_power_path, "0");
+				touch.touchkey_blocked = false;
+				sysfs_write(touch.touchkey_power_path, "0");
 			}
 		}
 	} else {
-		if (!touch->touchkey_blocked) {
-			sysfs_write(touch->touchkey_power_path, "1");
+		if (!touch.touchkey_blocked) {
+			sysfs_write(touch.touchkey_power_path, "1");
 		}
 	}
 
