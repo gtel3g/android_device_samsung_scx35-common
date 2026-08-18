@@ -229,16 +229,14 @@ PRODUCT_PROPERTY_OVERRIDES += \
 # Dalvik heap config
 $(call inherit-product, frameworks/native/build/tablet-7in-hdpi-1024-dalvik-heap.mk)
 
-# For userdebug builds
+# Debug build configuration
+ifneq ($(filter eng userdebug,$(TARGET_BUILD_VARIANT)),)
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
-	ro.secure=0 \
-	ro.adb.secure=0 \
-	ro.debuggable=1 \
-	persist.sys.root_access=1 \
-	persist.service.adb.enable=1
+	persist.sys.root_access=1
 
 PRODUCT_PROPERTY_OVERRIDES += \
 	persist.sys.usb.config=mtp,adb
+endif
 
 # Memory configuration
 PRODUCT_PROPERTY_OVERRIDES += \
