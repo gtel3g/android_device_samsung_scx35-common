@@ -52,6 +52,7 @@
 #define SCALING_MAX_FREQ_PATH   CPU_SYSFS_PATH "/cpu0/cpufreq/scaling_max_freq"
 #define SCALING_MIN_FREQ_PATH   CPU_SYSFS_PATH "/cpu0/cpufreq/scaling_min_freq"
 #define CPU_NUM_MIN_LIMIT_PATH  CPU_SYSFS_PATH "/cpuhotplug/cpu_num_min_limit"
+#define GPU_MIN_LIMIT_PATH      "/sys/power/gpufreq_min_limit"
 #define PANEL_BRIGHTNESS        "/sys/class/backlight/panel/brightness"
 
 /* Interactive governor */
@@ -306,8 +307,9 @@ void power_init() {
 	get_cpu_interactive_paths();
 	find_input_nodes();
 
-	/* Start foreground operation with at least two CPUs online. */
+	/* Start foreground operation with responsive CPU and GPU floors. */
 	sysfs_write(CPU_NUM_MIN_LIMIT_PATH, "2");
+	sysfs_write(GPU_MIN_LIMIT_PATH, "312000");
 }
 
 /*
@@ -354,6 +356,7 @@ void power_set_interactive(int on) {
 	 * touchscreen and panel brightness handling below.
 	 */
 	sysfs_write(CPU_NUM_MIN_LIMIT_PATH, on ? "2" : "1");
+	sysfs_write(GPU_MIN_LIMIT_PATH, on ? "312000" : "-1");
 
 	// Do not disable any input devices if the screen is on but we are in a non-interactive state
 	if (!on) {

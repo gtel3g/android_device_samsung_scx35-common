@@ -11,3 +11,4 @@ type refnotify_exec, exec_type, file_type;
 type gps_data_file, file_type, data_file_type, core_data_file_type;
 type wpa, domain;
 type wpa_exec, exec_type, file_type;
+type sysfs_sprd_gpufreq, fs_type, sysfs_type;
