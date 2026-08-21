@@ -111,10 +111,10 @@ Only the three quirks included above are recognized at this point:
             <Limit name="size" min="64x64" max="1920x1088" />
             <Limit name="alignment" value="2x2" />
             <Limit name="block-size" value="16x16" />
-            <Limit name="blocks-per-second" range="1-491520" />
+            <Limit name="blocks-per-second" range="1-245760" />
+            <Limit name="frame-rate" range="1-30" />
             <Limit name="bitrate" range="1-50000000" />
 	    <Limit name="concurrent-instances" max="16" />
-            <Feature name="adaptive-playback" />
         </MediaCodec>
         <MediaCodec name="OMX.sprd.vpx.decoder" type="video/x-vnd.on2.vp8">
             <Quirk name="requires-allocate-on-output-ports" />
