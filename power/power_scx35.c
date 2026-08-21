@@ -53,6 +53,13 @@
 #define SCALING_MIN_FREQ_PATH   CPU_SYSFS_PATH "/cpu0/cpufreq/scaling_min_freq"
 #define CPU_NUM_MIN_LIMIT_PATH  CPU_SYSFS_PATH "/cpuhotplug/cpu_num_min_limit"
 #define GPU_MIN_LIMIT_PATH      "/sys/power/gpufreq_min_limit"
+
+#define INTERACTIVE_TARGET_LOADS_PATH \
+        CPU_SYSFS_PATH "/cpufreq/interactive/target_loads"
+#define INTERACTIVE_GO_HISPEED_LOAD_PATH \
+        CPU_SYSFS_PATH "/cpufreq/interactive/go_hispeed_load"
+#define INTERACTIVE_MIN_SAMPLE_TIME_PATH \
+        CPU_SYSFS_PATH "/cpufreq/interactive/min_sample_time"
 #define PANEL_BRIGHTNESS        "/sys/class/backlight/panel/brightness"
 
 /* Interactive governor */
@@ -310,6 +317,15 @@ void power_init() {
 	/* Start foreground operation with responsive CPU and GPU floors. */
 	sysfs_write(CPU_NUM_MIN_LIMIT_PATH, "2");
 	sysfs_write(GPU_MIN_LIMIT_PATH, "312000");
+
+	/*
+	 * SC8830 UI workloads are short and bursty. The stock interactive
+	 * governor waits too long before raising CPU frequency, which causes
+	 * visible stutter in SystemUI and Launcher animations.
+	 */
+	sysfs_write(INTERACTIVE_TARGET_LOADS_PATH, "80");
+	sysfs_write(INTERACTIVE_GO_HISPEED_LOAD_PATH, "85");
+	sysfs_write(INTERACTIVE_MIN_SAMPLE_TIME_PATH, "40000");
 }
 
 /*
