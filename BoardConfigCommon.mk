@@ -37,11 +37,8 @@ TARGET_PROCESS_SDK_VERSION_OVERRIDE += \
     /system/vendor/bin/hw/android.hardware.media.omx@1.0-service=22
 endif
 
-# RIL
-TARGET_DISABLE_ASHMEM_TRACKING := true
 
 # Graphics
-BOARD_EGL_NEEDS_HANDLE_VALUE := true
 USE_SPRD_DITHER := true
 USE_SPRD_HWCOMPOSER := true
 TARGET_FORCE_HWC_FOR_VIRTUAL_DISPLAYS := true
@@ -50,8 +47,6 @@ NUM_FRAMEBUFFER_SURFACE_BUFFERS := 3
 # HIDL
 DEVICE_MANIFEST_FILE := device/samsung/scx35-common/configs/manifest.xml
 
-# Codecs
-BOARD_CANT_REALLOCATE_OMX_BUFFERS := true
 
 # seccomp
 #BOARD_SECCOMP_POLICY := device/samsung/scx35-common/seccomp # This flag is dead?
@@ -68,14 +63,10 @@ BOARD_KERNEL_IMAGE_NAME := zImage
 TARGET_KERNEL_CROSS_COMPILE_PREFIX := arm-eabi-
 KERNEL_TOOLCHAIN := $(shell pwd)/prebuilts/gcc/linux-x86/arm/arm-eabi-4.8/bin
 
-# Include an expanded selection of fonts
-EXTENDED_FONT_FOOTPRINT := true
 
 # Bionic
 TARGET_NEEDS_PLATFORM_TEXT_RELOCATIONS := true
 
-# PowerHAL
-TARGET_POWERHAL_VARIANT := scx35
 
 # Build system
 WITHOUT_CHECK_API := true
@@ -101,9 +92,6 @@ BOARD_HAL_STATIC_LIBRARIES := libhealthd.sc8830
 
 # Charger
 BOARD_CHARGER_ENABLE_SUSPEND := false
-BOARD_NO_CHARGER_LED := true
-BOARD_CHARGING_MODE_BOOTING_LPM := /sys/class/power_supply/battery/batt_lp_charging
-CHARGING_ENABLED_PATH := /sys/class/power_supply/battery/batt_lp_charging
 BACKLIGHT_PATH := /sys/class/backlight/panel/brightness
 
 # Enable dex-preoptimization to speed up first boot sequence
