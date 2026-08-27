@@ -36,7 +36,6 @@ PRODUCT_PACKAGES += \
 
 # Bluetooth
 PRODUCT_PACKAGES += \
-	libbluetooth_jni \
 	bluetooth.default \
 	libbt-vendor
 
@@ -156,7 +155,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
 PRODUCT_PACKAGES += \
 	macloader \
 	libandroid_net \
-	libwpa_client \
 	wpa_supplicant_overlay.conf \
 	p2p_supplicant_overlay.conf
 
