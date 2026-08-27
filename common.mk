@@ -194,9 +194,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
 PERMISSIONS_XML_FILES := \
 	frameworks/native/data/etc/android.hardware.camera.autofocus.xml \
 	frameworks/native/data/etc/android.hardware.camera.front.xml \
-	frameworks/native/data/etc/android.hardware.camera.xml \
-	frameworks/native/data/etc/android.hardware.sensor.proximity.xml \
-	frameworks/native/data/etc/android.hardware.sensor.light.xml \
 	frameworks/native/data/etc/android.software.midi.xml \
 	packages/wallpapers/LivePicker/android.software.live_wallpaper.xml
 
