@@ -146,10 +146,6 @@ PRODUCT_PACKAGES += \
 	init.sc8830.usb.rc \
 	ueventd.sc8830.rc
 
-# Packages
-PRODUCT_PACKAGES += \
-	Jelly
-
 # Lights
 PRODUCT_PACKAGES += \
 	lights.sc8830
@@ -158,18 +154,11 @@ PRODUCT_PACKAGES += \
 PRODUCT_PROPERTY_OVERRIDES += \
 	camera.disable_zsl_mode=1
 
-# Languages
-PRODUCT_PROPERTY_OVERRIDES += \
-	ro.product.locale.language=en \
-	ro.product.locale.region=GB
-
 # Wifi
 PRODUCT_PACKAGES += \
 	macloader \
 	libandroid_net \
 	libwpa_client \
-	wificond \
-	wifilogd \
 	wpa_supplicant_overlay.conf \
 	p2p_supplicant_overlay.conf
 
@@ -213,12 +202,6 @@ PERMISSIONS_XML_FILES := \
 
 PRODUCT_COPY_FILES += \
 	$(foreach f,$(PERMISSIONS_XML_FILES),$(f):$(TARGET_COPY_OUT_SYSTEM)/etc/permissions/$(notdir $(f)))
-
-# enable Google-specific location features,
-# like NetworkLocationProvider and LocationCollector
-PRODUCT_PROPERTY_OVERRIDES += \
-	ro.com.google.locationfeatures=1 \
-	ro.com.google.networklocation=1
 
 # sdcardfs
 PRODUCT_PROPERTY_OVERRIDES += \
