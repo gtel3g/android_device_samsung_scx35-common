@@ -68,8 +68,6 @@ KERNEL_TOOLCHAIN := $(shell pwd)/prebuilts/gcc/linux-x86/arm/arm-eabi-4.8/bin
 TARGET_NEEDS_PLATFORM_TEXT_RELOCATIONS := true
 
 
-# Build system
-WITHOUT_CHECK_API := true
 
 # Lights
 TARGET_HAS_BACKLIT_KEYS := false
