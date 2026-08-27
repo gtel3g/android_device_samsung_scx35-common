@@ -79,7 +79,6 @@ PRODUCT_COPY_FILES += \
 
 # Common libs
 PRODUCT_PACKAGES += \
-	libstlport \
 	librilutils \
 	libril_shim \
 	libgps_shim \
@@ -171,7 +170,6 @@ PRODUCT_PACKAGES += \
 	libwpa_client \
 	wificond \
 	wifilogd \
-	wpa_supplicant.conf \
 	wpa_supplicant_overlay.conf \
 	p2p_supplicant_overlay.conf
 
@@ -240,7 +238,7 @@ endif
 
 # Memory configuration
 PRODUCT_PROPERTY_OVERRIDES += \
-	ro.config.low_ram=false \
+	ro.config.low_ram=true \
 	ro.statsd.enable=false
 
 # Keep ART footprint small without inheriting Android Go memory policy.
