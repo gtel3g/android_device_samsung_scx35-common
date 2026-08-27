@@ -89,8 +89,6 @@ PRODUCT_PACKAGES += \
 	libatchannel \
 	libsecril-client \
 	libsecril-shim \
-	libril \
-	rild \
 	modemd \
 	modem_control
 
