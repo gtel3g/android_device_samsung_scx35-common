@@ -37,7 +37,6 @@ TARGET_PROCESS_SDK_VERSION_OVERRIDE += \
     /system/vendor/bin/hw/android.hardware.media.omx@1.0-service=22
 endif
 
-
 # Graphics
 USE_SPRD_DITHER := true
 USE_SPRD_HWCOMPOSER := true
@@ -46,10 +45,6 @@ NUM_FRAMEBUFFER_SURFACE_BUFFERS := 3
 
 # HIDL
 DEVICE_MANIFEST_FILE := device/samsung/scx35-common/configs/manifest.xml
-
-
-# seccomp
-#BOARD_SECCOMP_POLICY := device/samsung/scx35-common/seccomp # This flag is dead?
 
 # Kernel
 BOARD_CUSTOM_BOOTIMG_MK := device/samsung/scx35-common/mkbootimg.mk
@@ -63,11 +58,8 @@ BOARD_KERNEL_IMAGE_NAME := zImage
 TARGET_KERNEL_CROSS_COMPILE_PREFIX := arm-eabi-
 KERNEL_TOOLCHAIN := $(shell pwd)/prebuilts/gcc/linux-x86/arm/arm-eabi-4.8/bin
 
-
 # Bionic
 TARGET_NEEDS_PLATFORM_TEXT_RELOCATIONS := true
-
-
 
 # Lights
 TARGET_HAS_BACKLIT_KEYS := false
@@ -78,9 +70,6 @@ TARGET_LD_SHIM_LIBS := \
 
 # Init
 TARGET_INIT_VENDOR_LIB := libinit_sec
-
-# Board specific features
-#TARGET_HAS_LEGACY_CAMERA_HAL1 := true
 
 # GPS
 TARGET_SPECIFIC_HEADER_PATH := device/samsung/scx35-common/include
