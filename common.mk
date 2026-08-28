@@ -96,7 +96,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
 	rild.libpath=/system/vendor/lib/libsecril-shim.so
 
 PRODUCT_COPY_FILES += \
-	$(LOCAL_PATH)/system/etc/init/rild.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/rild.rc
+	$(LOCAL_PATH)/system/etc/init/rild.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/rild.legacy.rc
 
 # GPS
 PRODUCT_PACKAGES += \
