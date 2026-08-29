@@ -6,12 +6,6 @@
 
 on early-boot
 
-# radio pipe
-    mkdir /dev/rpipe 0550 radio radio
-    exec -- /system/bin/mknod -m 666 /dev/rpipe/ril.vt.0 p
-    exec -- /system/bin/mknod -m 666 /dev/rpipe/ril.vt.1 p
-    exec -- /system/bin/mknod -m 666 /dev/rpipe/ril.vt.2 p
-
 on boot
 
     write /sys/class/gpio/export 167
@@ -23,13 +17,6 @@ on boot
     chmod 0664 /sys/class/gpio/gpio167/value
     chown root system /sys/class/gpio/gpio168/value
     chmod 0664 /sys/class/gpio/gpio168/value
-    chown system system /sys/class/switch/sprd_simdet/state
-
-#To allow interfaces to get v6 address when tethering is enabled
-    write /proc/sys/net/ipv6/conf/rmnet0/accept_ra 2
-    write /proc/sys/net/ipv6/conf/rmnet1/accept_ra 2
-    write /proc/sys/net/ipv6/conf/rmnet2/accept_ra 2
-
 # bluetooth
     # UART0 device
     chmod 660 /dev/ttyS0

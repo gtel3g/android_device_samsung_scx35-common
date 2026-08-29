@@ -14,17 +14,16 @@
 
 LOCAL_PATH := device/samsung/scx35-common
 
-# Inherit from AOSP product configuration
-$(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
-
-# Inherit from sprd-common device configuration
-$(call inherit-product, device/samsung/sprd-common/common.mk)
-
 DEVICE_PACKAGE_OVERLAYS += $(LOCAL_PATH)/overlay
 DEVICE_PACKAGE_OVERLAYS += $(LOCAL_PATH)/overlay-lineage
 
+# Default USB configuration
+PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
+	persist.sys.usb.config=mtp
+
 # Audio
 PRODUCT_PACKAGES += \
+	audio.r_submix.default \
 	audio_hw.xml \
 	audio_para \
 	audio_effects_vendor.conf \
@@ -76,27 +75,11 @@ PRODUCT_COPY_FILES += \
 	$(LOCAL_PATH)/system/etc/init/mediaserver.rc:$(TARGET_COPY_OUT_SYSTEM)/etc/init/mediaserver.rc
 
 
-# Common libs
+# Common compatibility libraries
 PRODUCT_PACKAGES += \
-	librilutils \
-	libril_shim \
 	libgps_shim \
-	libphoneserver_shim
+	libstlport
 
-# RIL
-PRODUCT_PACKAGES += \
-	libatchannel \
-	libsecril-client \
-	libsecril-shim \
-	modemd \
-	modem_control
-
-PRODUCT_PROPERTY_OVERRIDES += \
-	ro.radio.modemtype=w \
-	rild.libpath=/system/vendor/lib/libsecril-shim.so
-
-PRODUCT_COPY_FILES += \
-	$(LOCAL_PATH)/system/etc/init/rild.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/rild.legacy.rc
 
 # GPS
 PRODUCT_PACKAGES += \
@@ -117,21 +100,10 @@ PRODUCT_PACKAGES += \
 
 # System init.rc files
 PRODUCT_PACKAGES += \
-	at_distributor.rc \
 	chown_service.rc \
-	data.rc \
-	dns.rc \
-	engpc.rc \
 	gpsd.rc \
-	kill_phone.rc \
 	macloader.rc \
-	modem_control.rc \
-	modemd.rc \
-	nvitemd.rc \
-	phoneserver.rc \
-	refnotify.rc \
 	set_mac.rc \
-	smd_symlink.rc \
 	swap.rc \
 	wpa_supplicant.rc
 
@@ -153,14 +125,13 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 # Wifi
 PRODUCT_PACKAGES += \
+	wpa_supplicant \
+	wpa_supplicant.conf \
+	hostapd \
 	macloader \
 	libandroid_net \
 	wpa_supplicant_overlay.conf \
 	p2p_supplicant_overlay.conf
-
-# Disable mobile data on first boot
-PRODUCT_PROPERTY_OVERRIDES += \
-	ro.com.android.mobiledata=false
 
 # Disable treble OMX
 PRODUCT_PROPERTY_OVERRIDES += \
@@ -188,6 +159,14 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 # Permissions
 PERMISSIONS_XML_FILES := \
+	frameworks/native/data/etc/handheld_core_hardware.xml \
+	frameworks/native/data/etc/android.hardware.bluetooth_le.xml \
+	frameworks/native/data/etc/android.hardware.location.gps.xml \
+	frameworks/native/data/etc/android.hardware.wifi.xml \
+	frameworks/native/data/etc/android.hardware.wifi.direct.xml \
+	frameworks/native/data/etc/android.hardware.touchscreen.multitouch.xml \
+	frameworks/native/data/etc/android.software.sip.xml \
+	frameworks/native/data/etc/android.hardware.usb.accessory.xml \
 	frameworks/native/data/etc/android.hardware.camera.autofocus.xml \
 	frameworks/native/data/etc/android.hardware.camera.front.xml \
 	frameworks/native/data/etc/android.software.midi.xml \

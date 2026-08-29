@@ -12,8 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Inherit from SPRD common configs
--include device/samsung/sprd-common/BoardConfigCommon.mk
+# SPRD hardware
+BOARD_USES_SPRD_HARDWARE := true
+
+# Bluetooth
+BOARD_HAVE_BLUETOOTH := true
+BOARD_HAVE_BLUETOOTH_BCM := true
+
+# Audio
+BOARD_USES_TINYALSA_AUDIO := true
+TARGET_TINY_ALSA_IGNORE_SILENCE_SIZE := true
 
 # Platform
 TARGET_ARCH := arm
@@ -29,13 +37,6 @@ BOARD_VENDOR := samsung
 USE_BLUETOOTH_BCM4343 := true
 BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := device/samsung/scx35-common/bluetooth
 BOARD_CUSTOM_BT_CONFIG := device/samsung/scx35-common/bluetooth/libbt_vndcfg.txt
-
-ifeq ($(TARGET_DEVICE),gtel3g)
-# Legacy proprietary blob compatibility
-TARGET_PROCESS_SDK_VERSION_OVERRIDE += \
-    /system/vendor/bin/hw/android.hardware.camera.provider@2.4-service=22 \
-    /system/vendor/bin/hw/android.hardware.media.omx@1.0-service=22
-endif
 
 # Graphics
 USE_SPRD_DITHER := true

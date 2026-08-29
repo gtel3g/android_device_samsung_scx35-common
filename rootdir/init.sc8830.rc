@@ -309,9 +309,6 @@ on boot
 # for tsp command
     chown system system /sys/class/sec/tsp/cmd
 
-# phone
-    setprop ro.telephony.call_ring.multiple 0
-
 # GPIO DVS
     chown radio system /sys/class/secgpio_check/secgpio_check_all/check_init_detail
     chown radio system /sys/class/secgpio_check/secgpio_check_all/check_sleep_detail
@@ -434,13 +431,6 @@ on property:ro.config.ksm.support=true
     write /sys/kernel/mm/ksm/pages_to_scan 100
     write /sys/kernel/mm/ksm/sleep_millisecs 500
     write /sys/kernel/mm/ksm/run   1
-
-    symlink /dev/spipe_w1 /dev/vbpipe1
-    symlink /dev/spipe_w2 /dev/vbpipe2
-    symlink /dev/spipe_w3 /dev/vbpipe3
-    symlink /dev/spipe_w6 /dev/vbpipe6
-    start refnotify_w
-    start nvitemd_w
 
     chmod 0666 /proc/pin_switch/iis0_sys_sel/cp0_iis0
     chmod 0666 /proc/pin_switch/iis0_sys_sel/cp1_iis0
