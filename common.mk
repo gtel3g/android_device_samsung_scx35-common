@@ -77,6 +77,7 @@ PRODUCT_COPY_FILES += \
 
 # Common compatibility libraries
 PRODUCT_PACKAGES += \
+	libion_shim \
 	libgps_shim \
 	libstlport
 

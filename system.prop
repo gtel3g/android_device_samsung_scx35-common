@@ -1,0 +1,13 @@
+
+# Graphics
+ro.opengles.version=131072
+ro.sf.disable_triple_buffer=0
+
+# Wireless connectivity subsystem
+ro.modem.wcn.enable=1
+ro.modem.wcn.dev=/dev/cpwcn
+ro.modem.wcn.diag=/dev/slog_wcn
+ro.modem.wcn.assert=/dev/spipe_wcn2
+ro.modem.wcn.id=1
+ro.modem.wcn.count=1
+persist.sys.sprd.wcnreset=1

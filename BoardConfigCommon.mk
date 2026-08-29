@@ -90,3 +90,6 @@ PRODUCT_SYSTEM_SERVER_COMPILER_FILTER := speed
 
 # SELinux policy
 BOARD_SEPOLICY_DIRS += device/samsung/scx35-common/sepolicy
+
+# System properties
+TARGET_SYSTEM_PROP += device/samsung/scx35-common/system.prop
