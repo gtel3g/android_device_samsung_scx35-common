@@ -316,7 +316,7 @@ void power_init() {
 
 	/* Start foreground operation with responsive CPU and GPU floors. */
 	sysfs_write(CPU_NUM_MIN_LIMIT_PATH, "2");
-	sysfs_write(GPU_MIN_LIMIT_PATH, "312000");
+	sysfs_write(GPU_MIN_LIMIT_PATH, "256000");
 
 	/*
 	 * SC8830 UI workloads are short and bursty. The stock interactive
@@ -372,7 +372,7 @@ void power_set_interactive(int on) {
 	 * touchscreen and panel brightness handling below.
 	 */
 	sysfs_write(CPU_NUM_MIN_LIMIT_PATH, on ? "2" : "1");
-	sysfs_write(GPU_MIN_LIMIT_PATH, on ? "312000" : "-1");
+	sysfs_write(GPU_MIN_LIMIT_PATH, on ? "256000" : "-1");
 
 	// Do not disable any input devices if the screen is on but we are in a non-interactive state
 	if (!on) {
