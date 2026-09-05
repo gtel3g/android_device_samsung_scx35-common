@@ -93,3 +93,7 @@ BOARD_SEPOLICY_DIRS += device/samsung/scx35-common/sepolicy
 
 # System properties
 TARGET_SYSTEM_PROP += device/samsung/scx35-common/system.prop
+
+# SPRD offline charger renders its UI dynamically.
+# Keep charger_res_images empty to avoid installing legacy bitmap resources.
+BOARD_HEALTHD_CUSTOM_CHARGER_RES := hardware/sprd/healthd/charger/res

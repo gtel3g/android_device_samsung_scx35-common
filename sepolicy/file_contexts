@@ -28,14 +28,14 @@
 
 /sys/power/restart_cpc       u:object_r:sysfs_restart_cpc:s0
 
-/system/bin/at_distributor   u:object_r:rild_exec:s0
-/system/bin/modemd           u:object_r:rild_exec:s0
-/system/bin/nvitemd          u:object_r:nvitemd_exec:s0
-/system/bin/phoneserver      u:object_r:rild_exec:s0
-/system/bin/refnotify        u:object_r:refnotify_exec:s0
-/system/bin/ext_data.sh      u:object_r:rild_exec:s0
-/system/bin/ext_kill.sh      u:object_r:rild_exec:s0
-/system/bin/ext_symlink.sh   u:object_r:rild_exec:s0
+/system/vendor/bin/at_distributor   u:object_r:rild_exec:s0
+/system/vendor/bin/modemd           u:object_r:rild_exec:s0
+/system/vendor/bin/nvitemd          u:object_r:nvitemd_exec:s0
+/system/vendor/bin/phoneserver      u:object_r:rild_exec:s0
+/system/vendor/bin/refnotify        u:object_r:refnotify_exec:s0
+/system/vendor/bin/ext_data.sh      u:object_r:rild_exec:s0
+/system/vendor/bin/ext_kill.sh      u:object_r:rild_exec:s0
+/system/vendor/bin/ext_symlink.sh   u:object_r:rild_exec:s0
 
 /data/misc/radio(/.*)?       u:object_r:radio_data_file:s0
 
@@ -60,7 +60,7 @@
 # WiFi
 /dev/rfkill                  u:object_r:rfkill_device:s0
 
-/system/bin/macloader        u:object_r:macloader_exec:s0
+/system/vendor/bin/macloader        u:object_r:macloader_exec:s0
 
 /data/.cid.info              u:object_r:wifi_data_file:s0
 /efs/wifi(/.*)?              u:object_r:wifi_data_file:s0
@@ -76,7 +76,7 @@
 
 /data/system/gps(/\.*.*)?    u:object_r:gps_data_file:s0
 
-/system/bin/gpsd             u:object_r:gpsd_exec:s0
+/system/vendor/bin/gpsd             u:object_r:gpsd_exec:s0
 
 # GFX
 /dev/mali[0-9]*              u:object_r:gpu_device:s0
@@ -94,7 +94,7 @@
 /data/local/media(/.*)?      u:object_r:media_data_file:s0
 
 # ENGPC
-/system/bin/engpc            u:object_r:engpc_exec:s0
+/system/vendor/bin/engpc            u:object_r:engpc_exec:s0
 
 # Gadget Serial
 /dev/ttyGS[0-9]+             u:object_r:gadget_serial_device:s0

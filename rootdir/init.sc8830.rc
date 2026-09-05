@@ -63,7 +63,7 @@ on fs
 on charger
 	write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor "powersave"
 
-service charger /charger
+service charger /sbin/sprd_charger
     class charger
     group log
     critical
